@@ -75,9 +75,8 @@ impl RpnCalculator {
             }
         }
         if stack.len() == 1 {
-            stack[0]
-        } else {
-            panic!("invalid syntax")
+            return stack[0];
         }
+        panic!("invalid syntax")
     }
 }
