@@ -80,3 +80,82 @@ impl RpnCalculator {
         panic!("invalid syntax")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ok() {
+        let calc = RpnCalculator::new(false);
+
+        assert_eq!(calc.eval("5"), 5);
+        assert_eq!(calc.eval("-5"), -5);
+
+        assert_eq!(calc.eval("10 2 +"), 12);
+        assert_eq!(calc.eval("-10 2 +"), -8);
+        assert_eq!(calc.eval("-10 -2 +"), -12);
+
+        assert_eq!(calc.eval("10 2 -"), 8);
+        assert_eq!(calc.eval("-10 2 -"), -12);
+        assert_eq!(calc.eval("-10 -2 -"), -8);
+
+        assert_eq!(calc.eval("10 2 *"), 20);
+        assert_eq!(calc.eval("-10 2 *"), -20);
+        assert_eq!(calc.eval("-10 -2 *"), 20);
+
+        assert_eq!(calc.eval("10 2 /"), 5);
+        assert_eq!(calc.eval("-10 2 /"), -5);
+        assert_eq!(calc.eval("-10 -2 /"), 5);
+        assert_eq!(calc.eval("10 3 /"), 3);
+        assert_eq!(calc.eval("0 3 /"), 0);
+
+        assert_eq!(calc.eval("10 2 %"), 0);
+        assert_eq!(calc.eval("-10 2 %"), 0);
+        assert_eq!(calc.eval("-10 -2 %"), 0);
+        assert_eq!(calc.eval("10 3 %"), 1);
+        assert_eq!(calc.eval("0 3 %"), 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng_invalid_syntax_1() {
+        let calc = RpnCalculator::new(false);
+        calc.eval("1 +");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng_invalid_syntax_2() {
+        let calc = RpnCalculator::new(false);
+        calc.eval("+ 1 1 +");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng_invalid_syntax_3() {
+        let calc = RpnCalculator::new(false);
+        calc.eval("1 1 1 +");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng_invalid_token() {
+        let calc = RpnCalculator::new(false);
+        calc.eval("1 1 ^");
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng_divisor_of_zero_1() {
+        let calc = RpnCalculator::new(false);
+        assert_eq!(calc.eval("3 0 /"), 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_ng_divisor_of_zero_2() {
+        let calc = RpnCalculator::new(false);
+        assert_eq!(calc.eval("3 0 %"), 3);
+    }
+}
